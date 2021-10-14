@@ -34,7 +34,7 @@ clean-targets:         # directories to be removed by `dbt clean`
 models:
   NGMA:
     landing:
-        +materialized: incremental
+        +materialized: table
         +schema: landing
     staging:
         +materialized: table
