@@ -1,0 +1,14 @@
+version: 2
+
+sources:
+  - name: PUBLIC
+    description: RAW data coming from firehose
+    database: DEMO_DB
+    tables: 
+      - name: RAW_SEGMENT_IDENTIFY_T
+        description: live pipeline data for identify (compnay and contact)
+        columns:
+          - name: load_id
+            description: PK for RAW_SEGMENT_IDENTIFY_T ... not unique
+            tests:
+              - not_null

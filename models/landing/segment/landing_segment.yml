@@ -1,0 +1,25 @@
+version: 2
+
+# unique
+# not_null
+# accepted_values
+# relationships
+
+models:
+  - name: land_segment_identify
+    description: ingested raw data from external source - no transformation - just load
+    columns:
+      - name: LAND_SEGMENT_IDENTIFY_KEY
+        description: PK for LAND_SEGMENT_IDENTIFY table
+        tests:
+          - unique
+          - not_null
+      - name: TYPE
+        description: '{{doc("just_testing")}}'
+        tests:
+          - accepted_values:
+              values: ['identify']
+      - name: SOURCE_SYSTEM
+        tests:
+          - accepted_values:
+              values: ['segment']
