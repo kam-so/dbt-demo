@@ -1,0 +1,18 @@
+version: 2
+
+# unique
+# not_null
+# accepted_values
+# relationships
+
+models:
+  - name: stg_segment_identify
+    columns:
+      - name: LAND_SEGMENT_IDENTIFY_KEY
+        description: FK for LAND_SEGMENT_IDENTIFY table
+        tests:
+          - unique
+          - not_null
+          - relationships:
+              to: LAND_SEGMENT_IDENTIFY
+              field: LAND_SEGMENT_IDENTIFY_KEY

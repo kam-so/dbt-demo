@@ -1,10 +1,12 @@
 {{
   config(
-    sort = 'load_id'
+    materialized='incremental',
+    schema= 'landing',
+    sort= 'load_id'
   )
 }}
 
-SELECT DEV_DB.LANDING.SEQ_LND_SEGMENT_IDENTIFY.NEXTVAL LAND_SEGMENT_IDENTIFY_KEY
+SELECT DEV_DB.LANDING.SEQ_LAND_SEGMENT_IDENTIFY.NEXTVAL LAND_SEGMENT_IDENTIFY_KEY
       ,*
 FROM {{ source('PUBLIC','RAW_SEGMENT_IDENTIFY_T')}}
 
