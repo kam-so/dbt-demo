@@ -28,6 +28,7 @@ SELECT
       ,scn_full.enr_company_scn_upper
       ,scn_full.enr_company_verdict
       ,scn_full.enrichment
+      ,scn_full.STG_SEGMENT_IDENTIFY_KEY
 FROM scn_unique 
   inner join
      scn_full
@@ -40,6 +41,6 @@ order by scn_full.enr_company_scn_id
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where STG_SEGMENT_IDENTIFY_KEY > (select max(STG_SEGMENT_IDENTIFY_KEY) from {{ this }})
+  where scn_full.STG_SEGMENT_IDENTIFY_KEY > (select max(STG_SEGMENT_IDENTIFY_KEY) from {{ this }})
 
 {% endif %}
