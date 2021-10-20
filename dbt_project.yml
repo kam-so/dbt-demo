@@ -40,5 +40,5 @@ models:
         +materialized: table
         +schema: staging
     warehouse:
-        +materialized: table
+        +materialized: view
         +schema: warehouse
