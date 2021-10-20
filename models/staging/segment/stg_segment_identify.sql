@@ -1,15 +1,14 @@
 {{
   config(
     materialized='incremental',
-    schema= 'staging',
-    sort= 'LAND_SEGMENT_IDENTIFY_KEY'
+    schema= 'staging'
   )
 }}
 
 with identify as
 (
-    SELECT STAGING.SEQ_STG_SEGMENT_IDENTIFY.NEXTVAL STG_SEGMENT_IDENTIFY_KEY
-        ,LAND_SEGMENT_IDENTIFY_KEY
+    SELECT 
+         LAND_SEGMENT_IDENTIFY_KEY
         ,METADATA
         ,TRIM(ANONYMOUSID) as ANONYMOUSID
         ,CHANNEL
@@ -34,14 +33,6 @@ with identify as
         ,METADATA_FILE_ROW_NUMBER
         ,LOAD_TIMESTAMP
         ,LOAD_ID
-        , CONTAINS(TRAITS,'"address":') as tra_address_flag
-        , CONTAINS(TRAITS,'"company":') as tra_company_flag
-        , CONTAINS(TRAITS,'"email":') as tra_email_flag
-        , CONTAINS(TRAITS,'"clearbit_reveal_company') as tra_clearbit_reveal_flag
-        , CONTAINS(TRAITS,'"clearbit_company') as tra_clearbit_flag
-        , CONTAINS(ENRICHMENT,'"company":') enr_company_flag
-        , CONTAINS(ENRICHMENT,'"email":') enr_email_flag
-        , CONTAINS(ENRICHMENT,'"location":') as enr_location_flag
         , TRIM(traits:address:city)::string as tra_address_city
         , TRIM(traits:address:country)::string as tra_address_country
         , TRIM(traits:address:postal_code)::string as tra_address_postal_code
@@ -56,18 +47,20 @@ with identify as
         , TRIM(traits:clearbit_company_category_industry_group)::string as tra_clearbit_company_category_industry_group
         , TRIM(traits:clearbit_company_category_sector)::string as tra_clearbit_company_category_sector
         , TRIM(traits:clearbit_company_domain)::string as tra_clearbit_company_domain
+        , TRIM(traits:clearbit_company_name)::string as tra_clearbit_company_name
+        , UPPER(TRIM(traits:clearbit_company_name))::string as tra_clearbit_company_name_upper
         , TRIM(traits:clearbit_company_legal_name)::string as tra_clearbit_company_legal_name
         , UPPER(TRIM(traits:clearbit_company_legal_name))::string as tra_clearbit_company_legal_name_upper
         , TRIM(traits:clearbit_company_metrics_annual_revenue)::string as tra_clearbit_company_metrics_annual_revenue
         , TRIM(traits:clearbit_company_metrics_employees)::string as tra_clearbit_company_metrics_employees
         , TRIM(traits:clearbit_company_metrics_employees_range)::string as tra_clearbit_company_metrics_employees_range
         , TRIM(traits:clearbit_company_metrics_estimated_annual_revenue)::string as tra_clearbit_company_metrics_estimated_annual_revenue
-        , TRIM(traits:clearbit_company_name)::string as tra_clearbit_company_name
-        , UPPER(TRIM(traits:clearbit_company_name))::string as tra_clearbit_company_name_upper
         , TRIM(traits:clearbit_person_employment_seniority)::string as tra_clearbit_person_employment_seniority
         , TRIM(traits:clearbit_person_employment_title)::string as tra_clearbit_person_employment_title
         , TRIM(traits:clearbit_reveal_company_legal_name)::string as tra_clearbit_reveal_company_legal_name
         , UPPER(TRIM(traits:clearbit_reveal_company_legal_name))::string as tra_clearbit_reveal_company_legal_name_upper
+        , TRIM(traits:clearbit_reveal_company_name)::string as tra_clearbit_reveal_company_name
+        , UPPER(TRIM(traits:clearbit_reveal_company_name))::string as tra_clearbit_reveal_company_name_upper
         , enrichment:company:company_scn_id::numeric as enr_company_scn_id
         , TRIM(enrichment:company:company_scn)::string as enr_company_scn
         , UPPER(TRIM(enrichment:company:company_scn))::string as enr_company_scn_upper
@@ -102,8 +95,21 @@ with identify as
 
     WHERE metadata_filename not like '%error%' 
 )
-
-select * from identify
+,
+all_result as
+(
+  select STAGING.SEQ_STG_SEGMENT_IDENTIFY.NEXTVAL STG_SEGMENT_IDENTIFY_KEY
+        ,CAST( NVL2(ENR_COMPANY_SCN_ID,TRUE,FALSE) AS BOOLEAN) GOT_COMPANY_SCN_FLAG
+        , CONTAINS(LOWER(TRAITS),'"clearbit_company') as GOT_TRA_CLEARBIT_FLAG
+        , CONTAINS(LOWER(TRAITS),'"clearbit_reveal_company') as GOT_TRA_CLEARBIT_REVEAL_FLAG
+        ,CAST( NVL2(USERID,TRUE,FALSE) AS BOOLEAN) GOT_USERID_FLAG
+        ,CAST( NVL2(ANONYMOUSID,TRUE,FALSE) AS BOOLEAN) GOT_ANONYMOUSID_FLAG
+        ,* 
+  from identify
+  where NOT ( ANONYMOUSID is NULL and ( USERID IS NULL OR USERID = '' ) )
+)
+select * from all_result
+order by ORIGINALTIMESTAMP asc
 
 {% if is_incremental() %}
 
