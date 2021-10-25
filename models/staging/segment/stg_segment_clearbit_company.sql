@@ -15,7 +15,7 @@ with cb_comp_full as
 ,
 cb_comp_unique as
 (
-    select tra_clearbit_company_legal_name_upper, max(ORIGINALTIMESTAMP) ORIGINALTIMESTAMP
+    select {{remove_special_characters('tra_clearbit_company_legal_name_upper')}} , max(ORIGINALTIMESTAMP) ORIGINALTIMESTAMP
     from cb_comp_full
     group by tra_clearbit_company_legal_name_upper
 )
@@ -44,11 +44,11 @@ FROM cb_comp_unique
      cb_comp_unique.ORIGINALTIMESTAMP = cb_comp_full.ORIGINALTIMESTAMP
   and 
      cb_comp_unique.tra_clearbit_company_legal_name_upper = cb_comp_full.tra_clearbit_company_legal_name_upper
-order by cb_comp_full.tra_clearbit_company_legal_name_upper
+
 
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where scn_full.STG_SEGMENT_IDENTIFY_KEY > (select max(STG_SEGMENT_IDENTIFY_KEY) from {{ this }})
+  where cb_comp_full.scn_full.STG_SEGMENT_IDENTIFY_KEY > (select max(STG_SEGMENT_IDENTIFY_KEY) from {{ this }})
 
 {% endif %}

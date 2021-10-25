@@ -36,7 +36,6 @@ FROM scn_unique
      scn_unique.ORIGINALTIMESTAMP = scn_full.ORIGINALTIMESTAMP
   and 
      scn_unique.enr_company_scn_id = scn_full.enr_company_scn_id
-order by scn_full.enr_company_scn_id
 
 {% if is_incremental() %}
 

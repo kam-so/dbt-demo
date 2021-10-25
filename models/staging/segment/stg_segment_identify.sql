@@ -109,7 +109,6 @@ all_result as
   where NOT ( ANONYMOUSID is NULL and ( USERID IS NULL OR USERID = '' ) )
 )
 select * from all_result
-order by ORIGINALTIMESTAMP asc
 
 {% if is_incremental() %}
 

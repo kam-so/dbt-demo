@@ -23,7 +23,8 @@ userid_unique as
     group by enr_email_formatted
 )
 
-SELECT userid_full.userid
+SELECT userid_full.STG_SEGMENT_IDENTIFY_KEY
+      ,userid_full.userid
       ,userid_full.tra_family_name
       ,userid_full.tra_given_name
       ,userid_full.enr_email_formatted
@@ -40,7 +41,6 @@ FROM userid_unique
      userid_unique.ORIGINALTIMESTAMP = userid_full.ORIGINALTIMESTAMP
   and 
      userid_unique.enr_email_formatted = userid_full.enr_email_formatted
-order by userid_full.userid
 
 {% if is_incremental() %}
 
