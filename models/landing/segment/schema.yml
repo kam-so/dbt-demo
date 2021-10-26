@@ -14,11 +14,13 @@ models:
         tests:
           - unique
           - not_null
+
       - name: TYPE
         description: '{{doc("just_testing")}}'
         tests:
           - accepted_values:
               values: ['identify']
+              
       - name: SOURCE_SYSTEM
         tests:
           - accepted_values:

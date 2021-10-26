@@ -1,8 +1,7 @@
-
 # Name your project! Project names should contain only lowercase characters
 # and underscores. A good package name should reflect your organization's
 # name or the intended use of these models
-name: 'NGMA'
+name: 'disw'
 version: '1.0.0'
 config-version: 2
 
@@ -24,15 +23,24 @@ clean-targets:         # directories to be removed by `dbt clean`
     - "target"
     - "dbt_modules"
 
+vars:
+    dev_db:  "DEV_DB"
+    qa_db:   "QA_DB"
 
-# Configuring models
-# Full documentation: https://docs.getdbt.com/docs/configuring-models
+    lnd_schema: "LANDING"
+    stg_schema: "STAGING"
+    wh_schema:  "WAREHOUSE"
 
-# In this example config, we tell dbt to build all models in the example/ directory
-# as tables. These settings can be overridden in the individual model files
-# using the `{{ config(...) }}` macro.
+on-run-start: 
+    - "{{ create_schemas() }}"
+    - "{{ create_sequence() }}"
+    - "{{ create_user() }}"
+    - "{{ grant_privilege() }}"
+
 models:
-  NGMA:
+  pre-hook: "{{ logging.log_model_start_event() }}"
+  post-hook: "{{ logging.log_model_end_event() }}"
+  disw:
     landing:
         +materialized: table
         +schema: landing
@@ -40,5 +48,5 @@ models:
         +materialized: table
         +schema: staging
     warehouse:
-        +materialized: view
+        +materialized: table
         +schema: warehouse

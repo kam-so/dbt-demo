@@ -1,9 +1,10 @@
 version: 2
 
 sources:
-  - name: PUBLIC
+  - name: aws_datalake
     description: RAW data coming from firehose
     database: DEMO_DB
+    schema: PUBLIC
     tables: 
       - name: RAW_SEGMENT_IDENTIFY_T
         description: live pipeline data for identify (compnay and contact)
