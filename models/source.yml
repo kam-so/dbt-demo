@@ -3,7 +3,7 @@ version: 2
 sources:
   - name: aws_datalake
     description: RAW data coming from firehose
-    database: DEMO_DB
+    database: "{{ env_var('DBT_SNOW_LANDING_DB') }}"
     schema: PUBLIC
     tables: 
       - name: RAW_SEGMENT_IDENTIFY_T
