@@ -6,7 +6,7 @@
 
 SELECT {{ var("lnd_schema") }}.SEQ_LAND_SEGMENT_IDENTIFY.NEXTVAL LAND_SEGMENT_IDENTIFY_KEY
       ,*
-FROM {{ source('aws_datalake','RAW_SEGMENT_IDENTIFY_T')}}
+FROM {{ source('aws_datalake','RAW_SEGMENT_IDENTIFY_T') }}
 
 {% if is_incremental() %}
 
