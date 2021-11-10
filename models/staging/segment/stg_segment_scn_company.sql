@@ -22,13 +22,12 @@ scn_unique as
     group by enr_company_scn_id
 )
 
-SELECT
-       scn_full.enr_company_scn_id
+SELECT LOAD_ID
+      ,scn_full.enr_company_scn_id
       ,scn_full.enr_company_scn
       ,scn_full.enr_company_scn_upper
       ,scn_full.enr_company_verdict
       ,scn_full.enrichment
-      ,scn_full.STG_SEGMENT_IDENTIFY_KEY
 FROM scn_unique 
   inner join
      scn_full
@@ -40,6 +39,7 @@ FROM scn_unique
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where scn_full.STG_SEGMENT_IDENTIFY_KEY > (select max(STG_SEGMENT_IDENTIFY_KEY) from {{ this }})
+  --where scn_full.STG_SEGMENT_IDENTIFY_KEY > (select max(STG_SEGMENT_IDENTIFY_KEY) from {{ this }})
+  where {{ var("segment_identify_key") }} > (select max( {{ var("segment_identify_key") }}) from {{ this }})
 
 {% endif %}

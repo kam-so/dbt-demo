@@ -8,8 +8,7 @@
 with identify as
 (
     SELECT 
-         LAND_SEGMENT_IDENTIFY_KEY
-        ,METADATA
+         METADATA
         ,TRIM(ANONYMOUSID) as ANONYMOUSID
         ,CHANNEL
         ,CONTEXT
@@ -98,8 +97,7 @@ with identify as
 ,
 all_result as
 (
-  select STAGING.SEQ_STG_SEGMENT_IDENTIFY.NEXTVAL STG_SEGMENT_IDENTIFY_KEY
-        ,CAST( NVL2(ENR_COMPANY_SCN_ID,TRUE,FALSE) AS BOOLEAN) GOT_COMPANY_SCN_FLAG
+  select CAST( NVL2(ENR_COMPANY_SCN_ID,TRUE,FALSE) AS BOOLEAN) GOT_COMPANY_SCN_FLAG
         , CONTAINS(LOWER(TRAITS),'"clearbit_company') as GOT_TRA_CLEARBIT_FLAG
         , CONTAINS(LOWER(TRAITS),'"clearbit_reveal_company') as GOT_TRA_CLEARBIT_REVEAL_FLAG
         ,CAST( NVL2(USERID,TRUE,FALSE) AS BOOLEAN) GOT_USERID_FLAG
@@ -113,6 +111,7 @@ select * from all_result
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where LAND_SEGMENT_IDENTIFY_KEY > (select max(LAND_SEGMENT_IDENTIFY_KEY) from {{ this }})
+  --where LAND_SEGMENT_IDENTIFY_KEY > (select max(LAND_SEGMENT_IDENTIFY_KEY) from {{ this }})
+  where {{ var("segment_identify_key") }} > (select max( {{ var("segment_identify_key") }}) from {{ this }})
 
 {% endif %}
