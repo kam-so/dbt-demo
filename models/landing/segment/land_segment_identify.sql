@@ -4,8 +4,7 @@
   )
 }}
 
-SELECT {{ var("lnd_schema") }}.SEQ_LAND_SEGMENT_IDENTIFY.NEXTVAL LAND_SEGMENT_IDENTIFY_KEY
-      ,*
+SELECT *
 FROM {{ source('aws_datalake','RAW_SEGMENT_IDENTIFY_T') }}
 
 {% if is_incremental() %} 
@@ -14,3 +13,4 @@ FROM {{ source('aws_datalake','RAW_SEGMENT_IDENTIFY_T') }}
   where {{ var("segment_identify_key") }} > (select max( {{ var("segment_identify_key") }}) from {{ this }})
 
 {% endif %}
+limit 100

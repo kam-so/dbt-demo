@@ -21,7 +21,7 @@ cb_comp_unique as
 )
 
 SELECT
-       cb_comp_full.STG_SEGMENT_IDENTIFY_KEY
+       cb_comp_full.LOAD_ID
       ,cb_comp_full.tra_clearbit_company_legal_name_upper
       ,cb_comp_full.tra_clearbit_company_category_industry
       ,cb_comp_full.tra_clearbit_company_category_industry_group
@@ -49,6 +49,7 @@ FROM cb_comp_unique
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where cb_comp_full.scn_full.STG_SEGMENT_IDENTIFY_KEY > (select max(STG_SEGMENT_IDENTIFY_KEY) from {{ this }})
+  --where cb_comp_full.scn_full.STG_SEGMENT_IDENTIFY_KEY > (select max(STG_SEGMENT_IDENTIFY_KEY) from {{ this }})
+  where {{ var("segment_identify_key") }} > (select max( {{ var("segment_identify_key") }}) from {{ this }})
 
 {% endif %}

@@ -23,7 +23,7 @@ userid_unique as
     group by enr_email_formatted
 )
 
-SELECT userid_full.STG_SEGMENT_IDENTIFY_KEY
+SELECT userid_full.LOAD_ID
       ,userid_full.userid
       ,userid_full.tra_family_name
       ,userid_full.tra_given_name
@@ -45,6 +45,7 @@ FROM userid_unique
 {% if is_incremental() %}
 
   -- this filter will only be applied on an incremental run
-  where STG_SEGMENT_IDENTIFY_KEY > (select max(STG_SEGMENT_IDENTIFY_KEY) from {{ this }})
+  --where STG_SEGMENT_IDENTIFY_KEY > (select max(STG_SEGMENT_IDENTIFY_KEY) from {{ this }})
+  where {{ var("segment_identify_key") }} > (select max( {{ var("segment_identify_key") }}) from {{ this }})
 
 {% endif %}
