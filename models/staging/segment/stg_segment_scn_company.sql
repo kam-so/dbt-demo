@@ -11,8 +11,6 @@ with scn_full as
     select *
     from {{ ref('stg_segment_identify') }}
     where GOT_COMPANY_SCN_FLAG
-        and NOT GOT_TRA_CLEARBIT_FLAG
-        and NOT GOT_TRA_CLEARBIT_REVEAL_FLAG
 )
 ,
 scn_unique as
@@ -22,11 +20,8 @@ scn_unique as
     group by enr_company_scn_id
 )
 
-SELECT LOAD_ID
-      ,scn_full.enr_company_scn_id
-      ,scn_full.enr_company_scn
-      ,scn_full.enr_company_scn_upper
-      ,scn_full.enr_company_verdict
+SELECT scn_full.LOAD_ID
+      , scn_full.enr_company_scn_id
       ,scn_full.enrichment
 FROM scn_unique 
   inner join

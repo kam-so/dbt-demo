@@ -15,27 +15,14 @@ with cb_comp_full as
 ,
 cb_comp_unique as
 (
-    select {{remove_special_characters('tra_clearbit_company_legal_name_upper')}} , max(ORIGINALTIMESTAMP) ORIGINALTIMESTAMP
+    select tra_clearbit_company_legal_name_upper , max(ORIGINALTIMESTAMP) ORIGINALTIMESTAMP
     from cb_comp_full
     group by tra_clearbit_company_legal_name_upper
 )
 
 SELECT
-       cb_comp_full.LOAD_ID
-      ,cb_comp_full.tra_clearbit_company_legal_name_upper
-      ,cb_comp_full.tra_clearbit_company_category_industry
-      ,cb_comp_full.tra_clearbit_company_category_industry_group
-      ,cb_comp_full.tra_clearbit_company_category_sector
-      ,cb_comp_full.tra_clearbit_company_domain
-      ,cb_comp_full.tra_clearbit_company_name
-      ,cb_comp_full.tra_clearbit_company_name_upper
-      ,cb_comp_full.tra_clearbit_company_legal_name
-      ,cb_comp_full.tra_clearbit_company_metrics_annual_revenue
-      ,cb_comp_full.tra_clearbit_company_metrics_employees
-      ,cb_comp_full.tra_clearbit_company_metrics_employees_range
-      ,cb_comp_full.tra_clearbit_company_metrics_estimated_annual_revenue
-      ,cb_comp_full.tra_clearbit_person_employment_seniority
-      ,cb_comp_full.tra_clearbit_person_employment_title
+        cb_comp_full.LOAD_ID
+      , UPPER(TRIM(traits:clearbit_company_legal_name))::string as tra_clearbit_company_legal_name_upper
       ,cb_comp_full.TRAITS
 FROM cb_comp_unique 
   inner join
